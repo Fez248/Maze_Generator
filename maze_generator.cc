@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
@@ -20,7 +21,8 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
     while(lx != 0 or ly != 0)
     {
         map[start.x][start.y] = '.';
-
+        srand(time(NULL));
+        int a = rand() % 100;
     }
 }
 
