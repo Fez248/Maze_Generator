@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
-	@@ -7,29 +8,145 @@ using namespace std;
+
 typedef vector<char> Row;
 typedef vector<Row> Maze;
 
