@@ -4,7 +4,6 @@
 #include <time.h>
 using namespace std;
 
-//test
 typedef vector<char> Row;
 typedef vector<Row> Maze;
 
