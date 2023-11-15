@@ -26,14 +26,14 @@ bool in_range(const int sx, const int sy, int x, int y)
     return x < sx and x > -1 and y < sy and y > -1;
 }
 
-bool prision(const Maze2& visited, const int sx, const int sy, int i, int j)
+bool prision(const Maze& map, const int sx, const int sy, int i, int j)
 {
-    int conected = 0;
-    if (in_range(sx, sy, i + 1, j) and visited[i + 1][j]) ++conected;
-    if (in_range(sx, sy, i - 1, j) and visited[i - 1][j]) ++conected;
-    if (in_range(sx, sy, i, j + 1) and visited[i][j + 1]) ++conected;
-    if (in_range(sx, sy, i, j - 1) and visited[i][j - 1]) ++conected;
-    return conected;
+    int invalid = 0;
+    if (in_range(sx, sy, i + 1, j) and map[i + 1][j] == '.') invalid = invalid - 1;
+    if (in_range(sx, sy, i - 1, j) and map[i - 1][j] == '.') invalid = invalid - 1;
+    if (in_range(sx, sy, i, j + 1) and map[i][j + 1] == '.') invalid = invalid - 1;
+    if (in_range(sx, sy, i, j - 1) and map[i][j - 1] == '.') invalid = invalid - 1;
+    return invalid;
 }
 
 void reset(std::vector<bool>& tried)
@@ -49,25 +49,30 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
 
     i = exit.x = sx - 1;
     j = exit.y = sy -1;
+    map[i][j] = '.';
     visited[i][j] = true;
-
+    int fuck;
     std::vector<bool> tried(4, false);
 
     while (length != 0)
     {
         int dir = rand() % 4;
-        while(tried[dir])
+        fuck = 0;
+        while(tried[dir] and fuck < 4)
         {
             if (dir == 3) dir = 0;
             else ++dir;
+            ++fuck;
         }
+        if (fuck == 4) length = 0;
+        else fuck = 0;
 
         switch(dir)
         {
             case 0:
-                if (in_range(sx, sy, i + 1, j) and !visited[i + 1][j] and 2 > prision(visited, sx, sy, i + 1, j))
+                if (in_range(sx, sy, i + 1, j) and !visited[i + 1][j] and prision(map, sx, sy, i + 1, j) == -1)
                 {
-                    std::cout << "d" << std::endl;
+                    //std::cout << "d" << std::endl;
                     map[i + 1][j] = '.';
                     visited[i + 1][j] = true;
                     --length;
@@ -77,9 +82,9 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
                 else tried[dir] = true;
                 break;
             case 1:
-                if (in_range(sx, sy, i - 1, j) and !visited[i -1][j] and 2 > prision(visited, sx, sy, i - 1, j))
+                if (in_range(sx, sy, i - 1, j) and !visited[i -1][j] and prision(map, sx, sy, i - 1, j) == -1)
                 {
-                    std::cout << "i" << std::endl;
+                    //std::cout << "i" << std::endl;
                     map[i - 1][j] = '.';
                     visited[i - 1][j] = true;
                     --length;
@@ -89,9 +94,9 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
                 else tried[dir] = true;
                 break;
             case 2:
-                if (in_range(sx, sy, i, j + 1) and !visited[i][j + 1] and 2 > prision(visited, sx, sy, i, j + 1))
+                if (in_range(sx, sy, i, j + 1) and !visited[i][j + 1] and prision(map, sx, sy, i, j + 1) == -1)
                 {
-                    std::cout << "a" << std::endl;
+                    //std::cout << "a" << std::endl;
                     map[i][j + 1] = '.';
                     visited[i][j + 1] = true;
                     --length;
@@ -101,9 +106,9 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
                 else tried[dir] = true;
                 break;
             case 3:
-                if (in_range(sx, sy, i, j - 1) and !visited[i][j - 1] and 2 > prision(visited, sx, sy, i, j - 1))
+                if (in_range(sx, sy, i, j - 1) and !visited[i][j - 1] and prision(map, sx, sy, i, j - 1) == -1)
                 {
-                    std::cout << "ab" << std::endl;
+                    //std::cout << "ab" << std::endl;
                     map[i][j - 1] = '.';
                     visited[i][j -1] = true;
                     --length;
@@ -114,13 +119,15 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
                 break;
 
             default:
+                std::cout << "fuck" << std::endl;
                 break;
         }
     }
 
     start.x = i;
     start.y = j;
-    map[i][j] = 'S';
+    if (fuck != 4) map[i][j] = 'S';
+    else map[i][j] = 'O';
     map[exit.x][exit.y] = 'E';
 }
 
