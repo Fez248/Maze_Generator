@@ -1,9 +1,15 @@
+/*
+Creator: Ferran Benéitez Borrut
+Last Edit: 15/11/2023
+I forgor: https://docs.github.com/en/get-started/using-git/getting-changes-from-a-remote-repository
+**/
+
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
-//a
+
 typedef vector<char> Row;
 typedef vector<Row> Maze;
 
@@ -48,8 +54,6 @@ bool prision(const Maze2& visited, const int sx, const int sy, int i, int j)
         else r4 = false;
     }
     else r4 = true;
-
-    return 
 }
 
 void gen_cami(Maze& map, const int sx, const int sy, position& start, position&exit)
