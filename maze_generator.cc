@@ -55,71 +55,19 @@ bool prision(const Maze2& visited, const int sx, const int sy, int i, int j)
 
 void gen_cami(Maze& map, const int sx, const int sy, position& start, position&exit)
 {
-    int length = rand() % (sx * sy / 2);
-    int i, j;
-    i = exit.x = sx - 1;
-    j = exit.y = sy -1;
-    Maze2 visited(sx, Row2(sy, false));
-    visited[i][j] = true;
-    pair<int, int> anterior = make_pair(i, j);
-
-    while (length != 0)
+    int lx = exit.x - start.x;
+    int ly = exit.y - start.y;
+    while(lx != 0 or ly != 0)
     {
-        int dir = rand() % 4;
-        switch(dir)
-        {
-            case 0:
-                if (in_range(sx, sy, i + 1, j) and !visited[i + 1][j])
-                {
-                    map[i + 1][j] = '.';
-                    visited[i + 1][j] = true;
-                    --length;
-                    ++i;
-                }
-                break;
-            case 1:
-                if (in_range(sx, sy, i - 1, j) and !visited[i -1][j])
-                {
-                    map[i - 1][j] = '.';
-                    visited[i -1][j] = true;
-                    --length;
-                    --i;
-                }
-                break;
-            case 2:
-                if (in_range(sx, sy, i, j + 1) and !visited[i][j + 1])
-                {
-                    map[i][j + 1] = '.';
-                    visited[i][j + 1] = true;
-                    --length;
-                    ++j;
-                }
-                break;
-            case 3:
-                if (in_range(sx, sy, i, j - 1) and !visited[i][j - 1])
-                {
-                    map[i][j - 1] = '.';
-                    visited[i][j -1] = true;
-                    --length;
-                    --j;
-                }
-                break;
+        map[start.x][start.y] = '.';
 
-            default:
-                break;
-        }
     }
-
-    start.x = i;
-    start.y = j;
-    map[i][j] = 'S';
-    map[exit.x][exit.y] = 'E';
 }
 
-//void gen_maze(Maze& map, const int sx, const int sy, position& start, position& exit)
-//{
-    
-//}
+void gen_maze(Maze& map, const int sx, const int sy, position& start, position& exit)
+{
+    srand(time(NULL));
+}
 
 int main ()
 {
