@@ -77,7 +77,7 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position& 
 
     while(map[i][j] == 'E' or map[i][j] == 'S')
     {
-        i = exit.x = rand() % sx;                                                           //We start from the exit
+        i = exit.x = rand() % sx;                                                       //We start from the exit
         j = exit.y = rand() % sy;
     }
     map[i][j] = '.';                                                                    //This coordinate with later get replaced by E but it's initialized as . for prision()
