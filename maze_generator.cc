@@ -33,7 +33,7 @@ bool prision(const Maze& map, const int sx, const int sy, int i, int j)
     if (in_range(sx, sy, i - 1, j) and map[i - 1][j] == '.') invalid = invalid - 1;
     if (in_range(sx, sy, i, j + 1) and map[i][j + 1] == '.') invalid = invalid - 1;
     if (in_range(sx, sy, i, j - 1) and map[i][j - 1] == '.') invalid = invalid - 1;
-    return invalid;
+    return invalid < -1;
 }
 
 void reset(std::vector<bool>& tried)
@@ -44,74 +44,68 @@ void reset(std::vector<bool>& tried)
 void gen_cami(Maze& map, const int sx, const int sy, position& start, position&exit)
 {
     Maze2 visited(sx, Row2(sy, false));
-    int length = (sx * sy) / 2;
-    int i, j;
+    int i, j, max;
 
+    max = (sx * sy) / 4;
     i = exit.x = sx - 1;
     j = exit.y = sy -1;
     map[i][j] = '.';
     visited[i][j] = true;
-    int fuck;
+    int fuck = 0;
     std::vector<bool> tried(4, false);
 
-    while (length != 0)
+    while (fuck != 4 and max != 0)
     {
         int dir = rand() % 4;
-        fuck = 0;
         while(tried[dir] and fuck < 4)
         {
             if (dir == 3) dir = 0;
             else ++dir;
             ++fuck;
         }
-        if (fuck == 4) length = 0;
-        else fuck = 0;
+        if (fuck != 4) fuck = 0;
 
         switch(dir)
         {
             case 0:
-                if (in_range(sx, sy, i + 1, j) and !visited[i + 1][j] and prision(map, sx, sy, i + 1, j) == -1)
+                if (in_range(sx, sy, i + 1, j) and !visited[i + 1][j] and !prision(map, sx, sy, i + 1, j)) //abajo
                 {
-                    //std::cout << "d" << std::endl;
                     map[i + 1][j] = '.';
                     visited[i + 1][j] = true;
-                    --length;
+                    --max;
                     ++i;
                     reset(tried);
                 }
                 else tried[dir] = true;
                 break;
             case 1:
-                if (in_range(sx, sy, i - 1, j) and !visited[i -1][j] and prision(map, sx, sy, i - 1, j) == -1)
+                if (in_range(sx, sy, i - 1, j) and !visited[i -1][j] and !prision(map, sx, sy, i - 1, j)) //arriba
                 {
-                    //std::cout << "i" << std::endl;
                     map[i - 1][j] = '.';
                     visited[i - 1][j] = true;
-                    --length;
+                    --max;
                     --i;
                     reset(tried);
                 }
                 else tried[dir] = true;
                 break;
             case 2:
-                if (in_range(sx, sy, i, j + 1) and !visited[i][j + 1] and prision(map, sx, sy, i, j + 1) == -1)
-                {
-                    //std::cout << "a" << std::endl;
+                if (in_range(sx, sy, i, j + 1) and !visited[i][j + 1] and !prision(map, sx, sy, i, j + 1)) //derecha
+                {;
                     map[i][j + 1] = '.';
                     visited[i][j + 1] = true;
-                    --length;
+                    --max;
                     ++j;
                     reset(tried);
                 }
                 else tried[dir] = true;
                 break;
             case 3:
-                if (in_range(sx, sy, i, j - 1) and !visited[i][j - 1] and prision(map, sx, sy, i, j - 1) == -1)
+                if (in_range(sx, sy, i, j - 1) and !visited[i][j - 1] and !prision(map, sx, sy, i, j - 1)) //izquierda
                 {
-                    //std::cout << "ab" << std::endl;
                     map[i][j - 1] = '.';
                     visited[i][j -1] = true;
-                    --length;
+                    --max;
                     --j;
                     reset(tried);
                 }
@@ -119,30 +113,23 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
                 break;
 
             default:
-                std::cout << "fuck" << std::endl;
                 break;
         }
     }
 
     start.x = i;
     start.y = j;
-    if (fuck != 4) map[i][j] = 'S';
-    else map[i][j] = 'O';
+    map[i][j] = 'S';
     map[exit.x][exit.y] = 'E';
 }
-
-//void gen_maze(Maze& map, const int sx, const int sy, position& start, position& exit)
-//{
-
-//}
 
 int main ()
 {
     int sx, sy;
-    sx = sy = 20;
+    sx = sy = 10;
     int h = 0;
 
-    while (h < 1)
+    while (h < 10)
     {
         srand(time(NULL) + h);
         Maze map(sx, Row(sy, 'X'));
