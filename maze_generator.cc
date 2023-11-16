@@ -1,5 +1,5 @@
 /*
-Creator: Ferran Benéitez Borrut
+Creator: Ferran Benéitez Borrut and Jan Rosell
 Last Edit: 16/11/2023
 I forgor: https://docs.github.com/en/get-started/using-git/getting-changes-from-a-remote-repository
 
@@ -10,6 +10,8 @@ more difficult. The problem I have to face know is making the algorithm able to 
 what I mean by that is making sure it doesn't creatre any area bigger than 1 x 1.
 
 Also the code still needs a lot of work.
+
+Idea: Last path can overrite other paths, E and S
 **/
 
 #include <iostream>
@@ -61,14 +63,14 @@ void reset(std::vector<bool>& tried)
     for (int i = 0; i < 4; ++i) tried[i] = false;
 }
 
-void gen_cami(Maze& map, const int sx, const int sy, position& start, position&exit)
+void gen_cami(Maze& map, const int sx, const int sy, position& start, position& exit, int rosell)
 {
     std::vector<bool> tried(4, false);                                                  //Tried directions to know when is trapped
 
     int i, j, max, stucked, dir;
     max = (sx * sy) / 4;                                                                //Maz lenght that the pace can take
-    i = exit.x = sx - 1;                                                                //We start from the exit
-    j = exit.y = sy -1;
+    i = exit.x = rand() % sx;                                                              //We start from the exit
+    j = exit.y = rand() % sy;
     stucked = 0;
 
     map[i][j] = '.';                                                                    //This coordinate with later get replaced by E but it's initialized as . for prision()
@@ -126,24 +128,38 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
 
     start.x = i;
     start.y = j;
-    map[i][j] = 'S';
-    map[exit.x][exit.y] = 'E';
+    if (rosell == 1)
+    {
+        map[i][j] = 'S';
+        map[exit.x][exit.y] = 'E';
+    }
+    else
+    {
+        map[i][j] = '.';
+        map[exit.x][exit.y] = '.';
+    }
 }
 
 int main ()
 {
     int sx, sy;
-    sx = sy = 33;
+    sx = sy = 100;
     int h = 0;
 
     while (h < 1)
     {
-        srand(time(NULL) + h);
         Maze map(sx, Row(sy, 'X'));
 
         position start, exit;
+        int jan = 0;
 
-        gen_cami(map, sx, sy, start, exit);
+        for (int i = 0; i < 1000; ++i) 
+        {
+            srand(time(NULL) + h + i + jan);
+            if (i != 500) gen_cami(map, sx, sy, start, exit, 0);
+            else gen_cami(map, sx, sy, start, exit, 1);
+            jan = jan + 50;
+        }
 
         for (int i = 0; i < sx; ++i)
         {
