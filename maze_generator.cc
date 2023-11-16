@@ -1,7 +1,9 @@
 /*
-Creator: Ferran Benéitez Borrut and Jan Rosell
+Creator: Ferran Benéitez Borrut
 Last Edit: 16/11/2023
 I forgor: https://docs.github.com/en/get-started/using-git/getting-changes-from-a-remote-repository
+
+Solved problem:
 
 Works for small mazes, with dimensions of 50 x 50 it starts to crete relative small paths due
 to the fact that it traps himself. Hovewer, the idea, is to run the same algorithm x times on the same map
@@ -9,7 +11,7 @@ and take the largest path formed as the solution. All the other ones remaining w
 more difficult. The problem I have to face know is making the algorithm able to cross other paths perpendiculary,
 what I mean by that is making sure it doesn't creatre any area bigger than 1 x 1.
 
-Also the code still needs a lot of work.
+The code still needs a lot of work.
 
 Idea: Last path can overrite other paths, E and S
 **/
@@ -51,10 +53,10 @@ bool in_range(const int sx, const int sy, int x, int y)
 bool prision(const Maze& map, const int sx, const int sy, int i, int j)
 {
     int invalid = 0;
-    if (in_range(sx, sy, i + 1, j) and map[i + 1][j] == '.') invalid = invalid - 1;
-    if (in_range(sx, sy, i - 1, j) and map[i - 1][j] == '.') invalid = invalid - 1;
-    if (in_range(sx, sy, i, j + 1) and map[i][j + 1] == '.') invalid = invalid - 1;
-    if (in_range(sx, sy, i, j - 1) and map[i][j - 1] == '.') invalid = invalid - 1;
+    if (in_range(sx, sy, i + 1, j) and (map[i + 1][j] == '.' or map[i + 1][j] == 'S' or map[i + 1][j] == 'E')) invalid = invalid - 1;
+    if (in_range(sx, sy, i - 1, j) and (map[i - 1][j] == '.' or map[i - 1][j] == 'S' or map[i - 1][j] == 'E')) invalid = invalid - 1;
+    if (in_range(sx, sy, i, j + 1) and (map[i][j + 1] == '.' or map[i][j + 1] == 'S' or map[i][j + 1] == 'E')) invalid = invalid - 1;
+    if (in_range(sx, sy, i, j - 1) and (map[i][j - 1] == '.' or map[i][j - 1] == 'S' or map[i][j - 1] == 'E')) invalid = invalid - 1;
     return invalid < -1;
 }
 
@@ -68,11 +70,16 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position& 
     std::vector<bool> tried(4, false);                                                  //Tried directions to know when is trapped
 
     int i, j, max, stucked, dir;
-    max = (sx * sy) / 4;                                                                //Maz lenght that the pace can take
-    i = exit.x = rand() % sx;                                                              //We start from the exit
+    i = exit.x = rand() % sx;                                                           //We start from the exit
     j = exit.y = rand() % sy;
+    max = (sx * sy) / 4;                                                                //Maz lenght that the pace can take
     stucked = 0;
 
+    while(map[i][j] == 'E' or map[i][j] == 'S')
+    {
+        i = exit.x = rand() % sx;                                                           //We start from the exit
+        j = exit.y = rand() % sy;
+    }
     map[i][j] = '.';                                                                    //This coordinate with later get replaced by E but it's initialized as . for prision()
 
     while (stucked != 4 and max != 0)
@@ -143,7 +150,7 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position& 
 int main ()
 {
     int sx, sy;
-    sx = sy = 100;
+    sx = sy = 10;
     int h = 0;
 
     while (h < 1)
@@ -153,11 +160,12 @@ int main ()
         position start, exit;
         int jan = 0;
 
-        for (int i = 0; i < 1000; ++i) 
+        srand(time(NULL) + h + jan);
+        gen_cami(map, sx, sy, start, exit, 1);
+        for (int i = 0; i < 4; ++i) 
         {
             srand(time(NULL) + h + i + jan);
-            if (i != 500) gen_cami(map, sx, sy, start, exit, 0);
-            else gen_cami(map, sx, sy, start, exit, 1);
+            gen_cami(map, sx, sy, start, exit, 0);
             jan = jan + 50;
         }
 
