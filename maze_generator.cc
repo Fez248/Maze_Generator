@@ -133,7 +133,7 @@ void gen_cami(Maze& map, const int sx, const int sy, position& start, position&e
 int main ()
 {
     int sx, sy;
-    sx = sy = 50;
+    sx = sy = 33;
     int h = 0;
 
     while (h < 1)
